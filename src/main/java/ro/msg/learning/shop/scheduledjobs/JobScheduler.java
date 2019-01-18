@@ -16,7 +16,7 @@ public class JobScheduler {
 		this.revenueJob = revenueJob;
 	}
 
-	@Scheduled(cron = "0 59 23 * * *", zone = "Europe/Bucharest")
+	@Scheduled(cron = "0 0 0 * * *", zone = "UTC")
 	public void scheduledRevenue() {
 		revenueJob.run();
 	}

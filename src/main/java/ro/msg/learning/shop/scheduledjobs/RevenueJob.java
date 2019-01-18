@@ -36,7 +36,7 @@ public class RevenueJob implements Runnable {
 		List<Revenue> revenueList = new ArrayList<>();
 		for (Location location: locations
 			 ) {
-			List<ShippingInfo> shippingInfos = shippingInfoService.getShippingInfoBetween(LocalDateTime.now().with(LocalTime.of(0, 0, 0)), LocalDateTime.now().with(LocalTime.of(23, 59, 59)));
+			List<ShippingInfo> shippingInfos = shippingInfoService.getShippingInfoBetween(LocalDateTime.now().minusDays(1), LocalDateTime.now().plusDays(1));
 			BigDecimal sum = BigDecimal.ZERO;
 			for (ShippingInfo shippingInfo: shippingInfos
 			) {
