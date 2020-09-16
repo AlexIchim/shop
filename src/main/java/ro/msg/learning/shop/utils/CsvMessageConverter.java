@@ -11,32 +11,39 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
 @Component
-public class CsvMessageConverter<T> extends AbstractGenericHttpMessageConverter<List<T>> {
+public class CsvMessageConverter extends AbstractGenericHttpMessageConverter {
 
-	private CSVMessageConverterUtil csvMessageConverterUtil = new CSVMessageConverterUtil();
+	UtilsCSV methodsCSV = new UtilsCSV();
 
 	public CsvMessageConverter() {
 		super(new MediaType("text", "csv"));
 	}
 
 	@Override
-	protected void writeInternal(List<T> objects, Type type, HttpOutputMessage httpOutputMessage) throws IOException, HttpMessageNotWritableException {
-		ParameterizedType parameterizedType = (ParameterizedType) type;
-		Class<T> myClazz = (Class<T>) parameterizedType.getActualTypeArguments()[0];
-		csvMessageConverterUtil.toCsv(myClazz, objects, httpOutputMessage.getBody());
+	protected void writeInternal(Object o, Type type, HttpOutputMessage httpOutputMessage) throws IOException, HttpMessageNotWritableException {
+		List<Object> objectArrayList;
+		if (o instanceof ArrayList) {
+			objectArrayList = new ArrayList<>((ArrayList<Object>) o);
+		} else {
+			objectArrayList = Collections.singletonList(o);
+		}
+		methodsCSV.toCsv(o.getClass(), objectArrayList, httpOutputMessage.getBody());
 	}
 
 	@Override
-	protected List<T> readInternal(Class aClass, HttpInputMessage httpInputMessage) throws IOException, HttpMessageNotReadableException {
-		return csvMessageConverterUtil.fromCsv(aClass, httpInputMessage.getBody());
+	protected Object readInternal(Class aClass, HttpInputMessage httpInputMessage) throws IOException, HttpMessageNotReadableException {
+		return methodsCSV.fromCvs(aClass, httpInputMessage.getBody());
 	}
 
+
 	@Override
-	public List<T> read(Type type, Class<?> aClass, HttpInputMessage httpInputMessage) throws IOException, HttpMessageNotReadableException {
+	public Object read(Type type, Class aClass, HttpInputMessage httpInputMessage) throws IOException, HttpMessageNotReadableException {
 		return readInternal(aClass, httpInputMessage);
 	}
 }
